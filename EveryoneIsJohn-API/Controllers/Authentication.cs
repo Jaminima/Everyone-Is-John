@@ -28,18 +28,28 @@ namespace EveryoneIsJohn_API.Controllers
             return s;
         }
 
-        [HttpGet("check")]
-        public IActionResult Check()
+        public static bool CheckAuth(HttpRequest request, out Data.Objects.User userOut)
         {
-            if (Request.Cookies.TryGetValue("id", out string? id) && Request.Cookies.TryGetValue("key", out string? key))
+            userOut = null;
+            if (request.Cookies.TryGetValue("id", out string? id) && request.Cookies.TryGetValue("key", out string? key))
             {
                 if (int.TryParse(id, out int Id) && Data.Stores.userStore.Get(Id, out var user))
                 {
-                    return new JsonResult(user);
+                    userOut = user;
+                    return true;
                 }
-                return Problem("You Have No Login", statusCode: 401);
             }
-            return Problem("You Have No Login", statusCode: 401);
+            return false;
+        }
+
+        [HttpGet("check")]
+        public IActionResult Check()
+        {
+            if (CheckAuth(Request, out var user))
+            {
+                return new JsonResult(user);
+            }
+            return Problem("No Login", statusCode: 401);
         }
 
         [HttpGet("new")]
