@@ -1,10 +1,12 @@
-﻿namespace EveryoneIsJohn_API.Data
+﻿using System.Collections.Concurrent;
+
+namespace EveryoneIsJohn_API.Data
 {
     public class Store<T> where T : Objects.DataObject
     {
         #region Fields
 
-        public Dictionary<int, T> dataSet;
+        public ConcurrentDictionary<int, T> dataSet;
         public int Id = 0;
 
         #endregion Fields
@@ -13,7 +15,7 @@
 
         public Store()
         {
-            dataSet = new Dictionary<int, T>();
+            dataSet = new ConcurrentDictionary<int, T>();
         }
 
         #endregion Constructors
@@ -23,7 +25,7 @@
         public T Append(T obj)
         {
             obj.Identifier = Id;
-            dataSet.Add(Id, obj);
+            dataSet.TryAdd(Id, obj);
             Id++;
             return obj;
         }
@@ -35,12 +37,12 @@
 
         public bool Remove(int Id)
         {
-            return dataSet.Remove(Id);
+            return dataSet.Remove(Id, out _);
         }
 
         public bool Remove(T obj)
         {
-            return dataSet.Remove(obj.Identifier);
+            return dataSet.Remove(obj.Identifier, out _);
         }
 
         #endregion Methods

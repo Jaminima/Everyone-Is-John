@@ -29,7 +29,7 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpGet("check")]
-        public async Task<IActionResult> Check()
+        public IActionResult Check()
         {
             if (Request.Cookies.TryGetValue("id", out string? id) && Request.Cookies.TryGetValue("key", out string? key))
             {
@@ -43,7 +43,7 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpGet("new")]
-        public async Task<IActionResult> NewUser([FromQuery] string? name)
+        public IActionResult NewUser([FromQuery] string? name)
         {
             string key = rndString();
             var user = new Data.Objects.User(encoder.Encode(key), name != null && name.Length > 0 ? name : randomNames[rnd.Next(0, randomNames.Length)]);
