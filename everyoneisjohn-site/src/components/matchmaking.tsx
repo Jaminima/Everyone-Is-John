@@ -5,6 +5,11 @@ import customFetch, {isLocalhost} from "../scripts/customFetch";
 class Matchmaking extends React.Component<any, any>{
     private first: boolean = true;
 
+    constructor(props:any) {
+        super(props);
+        this.props=props;
+    }
+
     props={
         user: {
             name: "",
@@ -72,17 +77,19 @@ class Matchmaking extends React.Component<any, any>{
                 </div>) :
                 (<div>
                     <table style={{width: "100vw"}}>
-                        <tr>
-                            <td>
-                                <button type="button" onClick={() => {this.createJohn()}}>Create John</button>
-                            </td>
-                            <td>
-                                <h4>John Join Code:</h4>
-                                <input onChange={(event) => {this.setState({joinIdentifier: event.target.value})}} placeholder="000000"/>
-                                <br/>
-                                <button type="button" onClick={() => {this.joinJohn()}}>Join John</button>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button type="button" onClick={() => {this.createJohn()}}>Create John</button>
+                                </td>
+                                <td>
+                                    <h4>John Join Code:</h4>
+                                    <input onChange={(event) => {this.setState({joinIdentifier: event.target.value})}} placeholder="000000"/>
+                                    <br/>
+                                    <button type="button" onClick={() => {this.joinJohn()}}>Join John</button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
 
 
