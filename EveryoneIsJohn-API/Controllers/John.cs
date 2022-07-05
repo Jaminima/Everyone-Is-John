@@ -67,8 +67,8 @@ namespace EveryoneIsJohn_API.Controllers
             return Problem("No Login", statusCode: 401);
         }
 
-        [HttpPost("join")]
-        public IActionResult JoinJohn([FromQuery] string id = "")
+        [HttpPost("join/{id}")]
+        public IActionResult JoinJohn(string id)
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
@@ -80,11 +80,10 @@ namespace EveryoneIsJohn_API.Controllers
                         {
                             john.pendingPlayers.Add(user.Identifier);
                             Response.Cookies.Append("johnId", john.Identifier.ToString());
-                            return new JsonResult(john);
                         }
-                        return Problem("Already In John", statusCode: 409);
+                        return new JsonResult(john);
                     }
-                    return Problem("You Already Run This John", statusCode: 409);
+                    return Problem("You Run This John", statusCode: 409);
                 }
                 return Problem("Cannot Find John", statusCode: 400);
             }

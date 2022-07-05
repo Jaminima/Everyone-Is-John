@@ -49,8 +49,8 @@ class Matchmaking extends React.Component<any, any>{
 
     joinJohn(){
         let that = this;
-        customFetch("john/"+this.state.joinIdentifier, (d)=>{
-            that.setState({john: d["john"], inJohn: true})
+        doFetch("john/join/"+this.state.joinIdentifier, "POST", (d)=>{
+            that.setState({john: d, inJohn: true})
             if (isLocalhost) localStorage.setItem("johnId",d["identifier"])
         },(d)=>{
 
@@ -66,7 +66,7 @@ class Matchmaking extends React.Component<any, any>{
         return (<div>
             {(this.state.inJohn ?
                 (<div>
-                    <h2>Active Game - {this.state.john.identifier}</h2>
+                    <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Pending Join To" : "Playing In")} Game - {this.state.john.identifier}</h2>
                     <h3>Character Name: {this.state.john.name}</h3>
                     <button type="button" onClick={() => {this.leaveJohn()}}>Leave John</button>
                 </div>) :
