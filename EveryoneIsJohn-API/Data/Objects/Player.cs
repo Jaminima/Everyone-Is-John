@@ -8,6 +8,10 @@
         {
             User = user;
             missions = new Mission[4];
+            missions[0] = new Mission();
+            missions[1] = new Mission();
+            missions[2] = new Mission();
+            missions[3] = new Mission();
         }
 
         #endregion Constructors
@@ -24,6 +28,14 @@
         public class Mission
         {
             #region Constructors
+
+            public Mission()
+            {
+                this.desc = "";
+                this.level = 0;
+                this.acheived = 0;
+                this.suggestedAcheived = 0;
+            }
 
             public Mission(int level, string desc)
             {
