@@ -1,6 +1,7 @@
 import React from "react";
 import doFetch from "../scripts/fetch";
 import customFetch, {isLocalhost} from "../scripts/customFetch";
+import Players from "./players";
 
 class Matchmaking extends React.Component<any, any>{
     private first: boolean = true;
@@ -26,19 +27,26 @@ class Matchmaking extends React.Component<any, any>{
             name: "",
             pendingPlayers: [],
             identifier: ""
-        }
+        },
+        players: [],
+        playersNames: [],
+        pendingPlayersNames: []
+    }
+
+    getJohn(){
+        let that = this;
+        customFetch("john", (d)=>{
+            that.setState({john: d["john"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
+        },(d)=>{
+
+        })
     }
 
     componentDidMount() {
-        let that = this;
         if (this.first){
             this.first=false;
 
-            customFetch("john", (d)=>{
-                that.setState({john: d["john"], inJohn: true})
-            },(d)=>{
-
-            })
+            this.getJohn();
         }
     }
 
@@ -55,7 +63,8 @@ class Matchmaking extends React.Component<any, any>{
     joinJohn(){
         let that = this;
         doFetch("john/join/"+this.state.joinIdentifier, "POST", (d)=>{
-            that.setState({john: d, inJohn: true})
+            that.getJohn();
+
             if (isLocalhost) localStorage.setItem("johnId",d["identifier"])
         },(d)=>{
 
@@ -73,6 +82,10 @@ class Matchmaking extends React.Component<any, any>{
                 (<div>
                     <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Pending Join To" : "Playing In")} Game - {this.state.john.identifier}</h2>
                     <h3>Character Name: {this.state.john.name}</h3>
+                    <h2>Pending</h2>
+                    <Players players={this.state.john.pendingPlayers} playersNames={this.state.pendingPlayersNames}></Players>
+                    <h2>Players</h2>
+                    <Players players={this.state.players} playersNames={this.state.playersNames}></Players>
                     <button type="button" onClick={() => {this.leaveJohn()}}>Leave John</button>
                 </div>) :
                 (<div>

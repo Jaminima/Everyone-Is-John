@@ -60,7 +60,24 @@ namespace EveryoneIsJohn_API.Controllers
                 if (FindJohn(Request, out var john, id))
                 {
                     Response.Cookies.Append("johnId", john.Identifier.ToString());
-                    return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray(), fullPlayers = user.Identifier == john.Creator ? john.players : null });
+                    var plers = john.players.Select(x => x.User).ToArray();
+                    var plersNames = plers.Select(x =>
+                    {
+                        if (Data.Stores.userStore.Get(x, out var u))
+                        {
+                            return u.Name;
+                        }
+                        return "Id - " + u.Identifier;
+                    });
+                    var pendingPlayers = john.pendingPlayers.Select(x =>
+                    {
+                        if (Data.Stores.userStore.Get(x, out var u))
+                        {
+                            return u.Name;
+                        }
+                        return "Id - " + u.Identifier;
+                    });
+                    return new JsonResult(new { john = john, players = plers, playersNames = plersNames, pendingPlayersNames = pendingPlayers, fullPlayers = user.Identifier == john.Creator ? john.players : null });
                 }
                 return Problem("No Provided John Id", statusCode: 400);
             }
