@@ -13,6 +13,7 @@ class Matchmaking extends React.Component<any, any>{
     }
 
     state = {
+        joinIdentifier: "",
         inJohn: false,
         john:{
             creator: -1,
@@ -47,7 +48,18 @@ class Matchmaking extends React.Component<any, any>{
     }
 
     joinJohn(){
+        let that = this;
+        customFetch("john/"+this.state.joinIdentifier, (d)=>{
+            that.setState({john: d["john"], inJohn: true})
+            if (isLocalhost) localStorage.setItem("johnId",d["identifier"])
+        },(d)=>{
 
+        })
+    }
+
+    leaveJohn(){
+        this.setState({john: null, inJohn: false})
+        if (isLocalhost) localStorage.removeItem("johnId");
     }
 
     render() {
@@ -56,10 +68,24 @@ class Matchmaking extends React.Component<any, any>{
                 (<div>
                     <h2>Active Game - {this.state.john.identifier}</h2>
                     <h3>Character Name: {this.state.john.name}</h3>
+                    <button type="button" onClick={() => {this.leaveJohn()}}>Leave John</button>
                 </div>) :
                 (<div>
-                    <button type="button" onClick={() => {this.createJohn()}}>Create John</button>
-                    <button type="button" onClick={() => {this.joinJohn()}}>Join John</button>
+                    <table style={{width: "100vw"}}>
+                        <tr>
+                            <td>
+                                <button type="button" onClick={() => {this.createJohn()}}>Create John</button>
+                            </td>
+                            <td>
+                                <h4>John Join Code:</h4>
+                                <input onChange={(event) => {this.setState({joinIdentifier: event.target.value})}} placeholder="000000"/>
+                                <br/>
+                                <button type="button" onClick={() => {this.joinJohn()}}>Join John</button>
+                            </td>
+                        </tr>
+                    </table>
+
+
                 </div>))}
         </div>);
     }
