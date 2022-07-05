@@ -1,5 +1,6 @@
 import React from "react";
 import {checkAuth, login} from "../scripts/auth";
+import Matchmaking from "./matchmaking";
 
 class Game extends React.Component<any, any>{
 
@@ -36,6 +37,7 @@ class Game extends React.Component<any, any>{
                     <h1>Profile</h1>
                     <h3>Name - {this.state.user.name}</h3>
                     <h5>Id - {this.state.user.identifier}</h5>
+                    <Matchmaking user={this.state.user}></Matchmaking>
                 </div>)
                 :(<h3>No Login Yet.</h3>)
             )}

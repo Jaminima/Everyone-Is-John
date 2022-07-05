@@ -10,6 +10,7 @@ function customFetch(url: string, success: (d: any) => void, fail: (d: any) => v
             ...optn.headers,
             id: localStorage.getItem('id'),
             key: localStorage.getItem('key'),
+            johnId: localStorage.getItem('johnId'),
             'Sec-Fetch-Mode': 'no-cors'
         }
     }

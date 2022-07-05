@@ -16,7 +16,11 @@ namespace EveryoneIsJohn_API.Controllers
 
         public static bool FindJohn(HttpRequest request, out Data.Objects.John john, string id = "")
         {
-            if (id.Length == 0 && request.Cookies.TryGetValue("johnId", out string johnid)) id = johnid;
+            if (id.Length == 0)
+            {
+                if (request.Cookies.TryGetValue("johnId", out string johnid)) id = johnid;
+                if (request.Headers.TryGetValue("johnId", out var jid)) id = jid.ToString();
+            }
 
             john = null;
             if (int.TryParse(id, out int Id))
@@ -30,7 +34,7 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("new")]
-        public IActionResult CreateJohn([FromQuery] string johnsName = "John")
+        public IActionResult CreateJohn([FromQuery] string? johnsName = "John")
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
