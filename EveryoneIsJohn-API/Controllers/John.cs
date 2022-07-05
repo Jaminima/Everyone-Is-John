@@ -45,15 +45,7 @@ namespace EveryoneIsJohn_API.Controllers
         [HttpGet("")]
         public IActionResult GetJohn()
         {
-            if (Authentication.CheckAuth(Request, out var user))
-            {
-                if (FindJohn(Request, out var john))
-                {
-                    return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray() });
-                }
-                return Problem("No Attached John", statusCode: 400);
-            }
-            return Problem("No Login", statusCode: 401);
+            return GetJohn("");
         }
 
         [HttpGet("{id}")]
@@ -63,7 +55,7 @@ namespace EveryoneIsJohn_API.Controllers
             {
                 if (FindJohn(Request, out var john, id))
                 {
-                    return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray() });
+                    return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray(), fullPlayers = user.Identifier == john.Creator ? john.players : null });
                 }
                 return Problem("No Provided John Id", statusCode: 400);
             }
@@ -95,12 +87,12 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("players")]
-        public IActionResult ManagePlayers([FromQuery] string player, [FromQuery] string johnid = "", [FromQuery] bool accept = false, [FromQuery] bool kick = false)
+        public IActionResult ManagePlayers([FromQuery] string player, [FromQuery] bool accept = false, [FromQuery] bool kick = false)
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
                 Data.Objects.John john;
-                if (FindJohn(Request, out john, johnid) && int.TryParse(player, out int playerId))
+                if (FindJohn(Request, out john) && int.TryParse(player, out int playerId))
                 {
 #warning ignores creator
                     if (john.Creator == user.Identifier || true)

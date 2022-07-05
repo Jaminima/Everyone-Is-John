@@ -40,16 +40,21 @@ namespace EveryoneIsJohn_API.Data.Objects
 
         #region Methods
 
-        public bool GetPlayer(User u, out Player player)
+        public bool GetPlayer(int id, out Player player)
         {
             player = null;
-            var p = players.Where(x => x.User == u.Identifier);
+            var p = players.Where(x => x.User == id);
             if (p.Any())
             {
                 player = p.First();
                 return true;
             }
             return false;
+        }
+
+        public bool GetPlayer(User u, out Player player)
+        {
+            return GetPlayer(u.Identifier, out player);
         }
 
         public bool GrantPending(int userId)

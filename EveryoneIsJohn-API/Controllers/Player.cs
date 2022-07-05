@@ -27,6 +27,32 @@ namespace EveryoneIsJohn_API.Controllers
             return Problem("No login", statusCode: 401);
         }
 
+        [HttpPost("score/ignoresuggested")]
+        public IActionResult IgnoreSuggestedScoreMission([FromQuery] string player, [FromQuery] string idx, [FromQuery] bool decrement = false)
+        {
+            if (int.TryParse(idx, out int Idx) && Idx >= 0 && Idx <= 4 && int.TryParse(player, out int playerId))
+            {
+                if (Authentication.CheckAuth(Request, out var user))
+                {
+                    if (John.FindJohn(Request, out var john))
+                    {
+                        if (john.Creator == user.Identifier)
+                        {
+                            if (john.GetPlayer(playerId, out var _player))
+                            {
+                                _player.missions[Idx].suggestedAcheived = _player.missions[Idx].acheived;
+                                return new JsonResult(_player);
+                            }
+                        }
+                        return Problem("You are not the Johns creator", statusCode: 401);
+                    }
+                    return Problem("No attached John", statusCode: 400);
+                }
+                return Problem("No login", statusCode: 401);
+            }
+            return Problem("Malformed mission index", statusCode: 400);
+        }
+
         [HttpPost("score/{idx}")]
         public IActionResult ScoreMission(string idx, [FromQuery] bool decrement = false)
         {
