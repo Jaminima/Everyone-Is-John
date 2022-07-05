@@ -93,6 +93,7 @@ namespace EveryoneIsJohn_API.Controllers
                             }
                             else if (kick)
                             {
+                                john.scores.RemoveAll(x => x.User == playerId);
                                 john.pendingPlayers.Remove(playerId);
                                 return Ok();
                             }
