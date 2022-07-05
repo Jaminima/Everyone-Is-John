@@ -4,13 +4,20 @@ namespace EveryoneIsJohn_API.Data.Objects
 {
     public class John : DataObject
     {
+        #region Fields
+
+        public List<Item> inventory;
+
+        #endregion Fields
+
         #region Constructors
 
         public John(User user, string johnsName = "John")
         {
             Creator = user.Identifier;
             Name = johnsName;
-            scores = new List<Score>();
+            players = new List<Player>();
+            inventory = new List<Item>();
             pendingPlayers = new List<int>();
         }
 
@@ -21,11 +28,10 @@ namespace EveryoneIsJohn_API.Data.Objects
         public int Creator { get; private set; }
 
         public string Name { get; set; }
-
         public List<int> pendingPlayers { get; set; }
 
         [JsonIgnore]
-        public List<Score> scores { get; set; }
+        public List<Player> players { get; set; }
 
         #endregion Properties
 
@@ -35,7 +41,7 @@ namespace EveryoneIsJohn_API.Data.Objects
         {
             if (pendingPlayers.Remove(userId))
             {
-                scores.Add(new Score(userId));
+                players.Add(new Player(userId));
                 return true;
             }
             return false;
