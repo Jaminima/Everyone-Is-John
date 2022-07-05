@@ -14,8 +14,10 @@ namespace EveryoneIsJohn_API.Controllers
 
         #region Methods
 
-        public static bool FindJohn(string id, HttpRequest request, out Data.Objects.John john)
+        public static bool FindJohn(HttpRequest request, out Data.Objects.John john, string id = "")
         {
+            if (id.Length == 0 && request.Cookies.TryGetValue("johnId", out string johnid)) id = johnid;
+
             john = null;
             if (int.TryParse(id, out int Id))
             {
@@ -34,7 +36,22 @@ namespace EveryoneIsJohn_API.Controllers
             {
                 var john = new Data.Objects.John(user, johnsName);
                 while (!Data.Stores.johnStore.Add(rnd.Next(), john)) { }
+                Response.Cookies.Append("johnId", john.Identifier.ToString());
                 return new JsonResult(john);
+            }
+            return Problem("No Login", statusCode: 401);
+        }
+
+        [HttpGet("")]
+        public IActionResult GetJohn()
+        {
+            if (Authentication.CheckAuth(Request, out var user))
+            {
+                if (FindJohn(Request, out var john))
+                {
+                    return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray() });
+                }
+                return Problem("No Attached John", statusCode: 400);
             }
             return Problem("No Login", statusCode: 401);
         }
@@ -44,7 +61,7 @@ namespace EveryoneIsJohn_API.Controllers
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (FindJohn(id, Request, out var john))
+                if (FindJohn(Request, out var john, id))
                 {
                     return new JsonResult(new { john = john, players = john.players.Select(x => x.User).ToArray() });
                 }
@@ -54,17 +71,18 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("join")]
-        public IActionResult JoinJohn([FromQuery] string id)
+        public IActionResult JoinJohn([FromQuery] string id = "")
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (FindJohn(id, Request, out var john))
+                if (FindJohn(Request, out var john, id))
                 {
                     if (john.Creator != user.Identifier)
                     {
                         if (!john.pendingPlayers.Contains(user.Identifier) || !john.players.Any(x => x.User == user.Identifier))
                         {
                             john.pendingPlayers.Add(user.Identifier);
+                            Response.Cookies.Append("johnId", john.Identifier.ToString());
                             return new JsonResult(john);
                         }
                         return Problem("Already In John", statusCode: 409);
@@ -77,13 +95,15 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("players")]
-        public IActionResult ManagePlayers([FromQuery] string johnid, [FromQuery] string player, [FromQuery] bool accept = false, [FromQuery] bool kick = false)
+        public IActionResult ManagePlayers([FromQuery] string player, [FromQuery] string johnid = "", [FromQuery] bool accept = false, [FromQuery] bool kick = false)
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (FindJohn(johnid, Request, out var john) && int.TryParse(player, out int playerId))
+                Data.Objects.John john;
+                if (FindJohn(Request, out john, johnid) && int.TryParse(player, out int playerId))
                 {
-                    if (john.Creator == user.Identifier)
+#warning ignores creator
+                    if (john.Creator == user.Identifier || true)
                     {
                         if (accept)
                         {
@@ -110,5 +130,4 @@ namespace EveryoneIsJohn_API.Controllers
 
         #endregion Methods
     }
-}
 }
