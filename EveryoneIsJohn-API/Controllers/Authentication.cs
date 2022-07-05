@@ -31,12 +31,22 @@ namespace EveryoneIsJohn_API.Controllers
         public static bool CheckAuth(HttpRequest request, out Data.Objects.User userOut)
         {
             userOut = null;
-            if (request.Cookies.TryGetValue("id", out string? id) && request.Cookies.TryGetValue("key", out string? key))
+
+            string? id;
+            string? key = "";
+            Microsoft.Extensions.Primitives.StringValues _id = "", _key = "";
+            if ((request.Cookies.TryGetValue("id", out id) && request.Cookies.TryGetValue("key", out key)) || (request.Headers.TryGetValue("id", out _id) && request.Headers.TryGetValue("key", out _key)))
             {
+                if (_id.Count > 0) id = _id.ToString();
+                if (_key.Count > 0) key = _key.ToString();
+
                 if (int.TryParse(id, out int Id) && Data.Stores.userStore.Get(Id, out var user))
                 {
-                    userOut = user;
-                    return true;
+                    if (encoder.Compare(key, user.Key))
+                    {
+                        userOut = user;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -60,8 +70,14 @@ namespace EveryoneIsJohn_API.Controllers
             user = Data.Stores.userStore.Append(user);
 
             Response.Cookies.Append("id", user.Identifier.ToString());
-            Response.Cookies.Append("key", user.Key);
-            return new JsonResult(user);
+            Response.Cookies.Append("key", key);
+
+            if (Request.Host.Host.Contains("localhost"))
+            {
+                return new JsonResult(new { id = user.Identifier, key = key, user = user });
+            }
+
+            return new JsonResult(new { user = user });
         }
 
         #endregion Methods
