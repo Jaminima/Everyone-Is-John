@@ -52,7 +52,7 @@ namespace EveryoneIsJohn_API.Controllers
             return Problem("No Login", statusCode: 401);
         }
 
-        [HttpGet("new")]
+        [HttpPost("new")]
         public IActionResult NewUser([FromQuery] string? name)
         {
             string key = rndString();
