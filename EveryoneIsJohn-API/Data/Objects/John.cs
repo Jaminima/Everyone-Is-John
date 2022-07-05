@@ -1,4 +1,6 @@
-﻿namespace EveryoneIsJohn_API.Data.Objects
+﻿using System.Text.Json.Serialization;
+
+namespace EveryoneIsJohn_API.Data.Objects
 {
     public class John : DataObject
     {
@@ -22,6 +24,7 @@
 
         public List<int> pendingPlayers { get; set; }
 
+        [JsonIgnore]
         public List<Score> scores { get; set; }
 
         #endregion Properties
