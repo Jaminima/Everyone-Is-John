@@ -9,6 +9,7 @@
             Creator = user.Identifier;
             Name = johnsName;
             scores = new List<Score>();
+            pendingPlayers = new List<int>();
         }
 
         #endregion Constructors

@@ -22,6 +22,12 @@ namespace EveryoneIsJohn_API.Data
 
         #region Methods
 
+        public bool Add(int Id, T obj)
+        {
+            obj.Identifier = Id;
+            return dataSet.TryAdd(Id, obj);
+        }
+
         public T Append(T obj)
         {
             obj.Identifier = Id;

@@ -11,7 +11,7 @@ namespace EveryoneIsJohn_API.Controllers
 
         private static ScryptEncoder encoder = new ScryptEncoder();
         private static string[] randomNames = new string[] { "Jahn", "Mortha", "Plopper", "Biggus Dickus" };
-        private static Random rnd = new Random();
+        private static Random rnd = new Random((int)DateTime.Now.Ticks);
 
         #endregion Fields
 
