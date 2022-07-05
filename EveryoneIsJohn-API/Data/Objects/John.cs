@@ -19,6 +19,7 @@ namespace EveryoneIsJohn_API.Data.Objects
             players = new List<Player>();
             inventory = new List<Item>();
             pendingPlayers = new List<int>();
+            isPlaying = false;
         }
 
         #endregion Constructors
@@ -26,6 +27,8 @@ namespace EveryoneIsJohn_API.Data.Objects
         #region Properties
 
         public int Creator { get; private set; }
+
+        public bool isPlaying { get; set; }
 
         public string Name { get; set; }
         public List<int> pendingPlayers { get; set; }

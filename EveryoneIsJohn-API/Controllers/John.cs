@@ -79,7 +79,7 @@ namespace EveryoneIsJohn_API.Controllers
                 {
                     if (john.Creator != user.Identifier)
                     {
-                        if (!john.pendingPlayers.Contains(user.Identifier) || !john.players.Any(x => x.User == user.Identifier))
+                        if (!john.pendingPlayers.Contains(user.Identifier) && !john.players.Any(x => x.User == user.Identifier))
                         {
                             john.pendingPlayers.Add(user.Identifier);
                             Response.Cookies.Append("johnId", john.Identifier.ToString());
