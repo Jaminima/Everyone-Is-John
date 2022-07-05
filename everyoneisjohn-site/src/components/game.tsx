@@ -1,11 +1,12 @@
 import React from "react";
-import {checkAuth, login} from "./scripts/auth";
+import {checkAuth, login} from "../scripts/auth";
 
-class Profile extends React.Component<any, any>{
+class Game extends React.Component<any, any>{
 
     private first : boolean = true;
 
     state={
+        loaded: false,
         user: {
             name: "",
             identifier: ""
@@ -17,10 +18,10 @@ class Profile extends React.Component<any, any>{
         if (this.first) {
             this.first=false;
             checkAuth().then((d:any) => {
-                that.setState({user: d});
+                that.setState({user: d, loaded: true});
             }).catch(() => {
                 login("").then((d: any) => {
-                    that.setState({user: d["user"]});
+                    that.setState({user: d["user"], loaded: true});
                 }).catch(() => {
                     console.error("Could Not Login");
                 })
@@ -30,11 +31,16 @@ class Profile extends React.Component<any, any>{
 
     render() {
         return (<div>
-            <h1>Profile</h1>
-            <h3>Name - {this.state.user.name}</h3>
-            <h5>Id - {this.state.user.identifier}</h5>
+            {(this.state.loaded ?
+                (<div>
+                    <h1>Profile</h1>
+                    <h3>Name - {this.state.user.name}</h3>
+                    <h5>Id - {this.state.user.identifier}</h5>
+                </div>)
+                :(<h3>No Login Yet.</h3>)
+            )}
         </div>);
     }
 }
 
-export default Profile;
+export default Game;
