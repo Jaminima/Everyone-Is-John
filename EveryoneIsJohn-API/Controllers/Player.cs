@@ -14,9 +14,13 @@ namespace EveryoneIsJohn_API.Controllers
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (John.FindJohn(Request, out var john, id))
+                if (John.FindJohn(Request, out var john))
                 {
-                    if (john.GetPlayer(user, out var player))
+                    if (id != null && id.Length > 0 && int.TryParse(id, out int Id) && john.GetPlayer(Id, out var _player))
+                    {
+                        return new JsonResult(_player);
+                    }
+                    else if (john.GetPlayer(user, out var player))
                     {
                         return new JsonResult(player);
                     }
@@ -96,7 +100,7 @@ namespace EveryoneIsJohn_API.Controllers
                         {
                             foreach (var mission in missions)
                             {
-                                if (mission.idx >= 0 && mission.idx <= 3 && mission.level >= 0 && mission.level <= 2)
+                                if (mission.idx >= 0 && mission.idx <= 3 && mission.level >= 1 && mission.level <= 3)
                                 {
                                     player.missions[mission.idx].desc = mission.desc;
                                     player.missions[mission.idx].level = mission.level;

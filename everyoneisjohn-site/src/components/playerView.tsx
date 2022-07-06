@@ -25,6 +25,17 @@ class PlayerView extends React.Component<any, any>{
     }
 
     private first: boolean = true;
+    private ignoreReUpdate: boolean = false;
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
+        if (!this.ignoreReUpdate) {
+            this.ignoreReUpdate = true;
+            this.getPlayer();
+        }
+        else{
+            this.ignoreReUpdate = false;
+        }
+    }
 
     componentDidMount() {
         if (this.first){
@@ -62,7 +73,7 @@ class PlayerView extends React.Component<any, any>{
                 <tbody>
                 <tr>
                     <th>Description</th>
-                    <th>Level (0-2)</th>
+                    <th>Level (1-3)</th>
                     <th>Score</th>
                 </tr>
                 {this.getRows()}

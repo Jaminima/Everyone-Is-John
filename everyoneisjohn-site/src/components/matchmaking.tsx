@@ -32,7 +32,8 @@ class Matchmaking extends React.Component<any, any>{
         },
         players: [],
         playersNames: [],
-        pendingPlayersNames: []
+        pendingPlayersNames: [],
+        viewingPlayer: ""
     }
 
     private johnUpdater: NodeJS.Timer | undefined;
@@ -136,7 +137,7 @@ class Matchmaking extends React.Component<any, any>{
                             (<div>
                                 <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
                                 <hr/>
-                                <PlayerView></PlayerView>
+                                <PlayerView playerId={this.state.viewingPlayer}></PlayerView>
                             </div>)
                             : (<div></div>)
                     )}

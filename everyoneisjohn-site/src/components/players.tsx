@@ -46,11 +46,15 @@ class Players extends React.Component<any, any>{
     getPlayersRows(){
         let rows = [];
         for (let i=0;i<this.props.matchmakingState.players.length;i++){
+            let id = this.props.matchmakingState.players[i];
+            let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
+            let missions = isOwner ? (<button type="button" onClick={()=>this.props.matchmaker.setState({viewingPlayer:id})}>Missions</button>) : (<a></a>)
+            let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
+
             rows.push((<tr key={i}>
                 <td>{this.props.matchmakingState.playersNames[i]}</td>
-                {(this.props.matchmakingState.john.creator.toString()==this.props.user.identifier ?
-                    (<td><button type="button" onClick={()=>this.kickPlayer(this.props.matchmakingState.players[i])}>Kick</button></td>):
-                    (<td></td>))}
+                <td>{missions}</td>
+                <td>{kick}</td>
             </tr>));
         }
         return rows;

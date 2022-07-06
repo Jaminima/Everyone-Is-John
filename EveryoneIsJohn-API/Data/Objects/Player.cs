@@ -8,10 +8,10 @@
         {
             User = user;
             missions = new Mission[4];
-            missions[0] = new Mission(0);
-            missions[1] = new Mission(1);
-            missions[2] = new Mission(2);
-            missions[3] = new Mission(3);
+            missions[0] = new Mission(0, 1, "Level 1 Mission");
+            missions[1] = new Mission(1, 2, "Level 2 Mission");
+            missions[2] = new Mission(2, 2, "Another Level 2 Mission");
+            missions[3] = new Mission(3, 3, "Level 3 Mission");
         }
 
         #endregion Constructors
