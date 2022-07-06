@@ -36,8 +36,26 @@ class Matchmaking extends React.Component<any, any>{
     getJohn(){
         let that = this;
         customFetch("john", (d)=>{
-            that.setState({john: d["john"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
-        },(d)=>{
+                if (d["john"]["creator"] == that.props.user.identifier || d["players"].includes(that.props.user.identifier) || d["john"]["pendingPlayers"].includes(that.props.user.identifier)){
+                    that.setState({john: d["john"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
+                }
+                else{
+                    that.setState({
+                        joinIdentifier: "",
+                        inJohn: false,
+                        john:{
+                            creator: -1,
+                            isPlaying: false,
+                            name: "",
+                            pendingPlayers: [],
+                            identifier: ""
+                        },
+                        players: [],
+                        playersNames: [],
+                        pendingPlayersNames: []
+                    })
+                }
+            },(d)=>{
 
         })
     }
@@ -82,11 +100,14 @@ class Matchmaking extends React.Component<any, any>{
                 (<div>
                     <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Pending Join To" : "Playing In")} Game - {this.state.john.identifier}</h2>
                     <h3>Character Name: {this.state.john.name}</h3>
-                    <h2>Pending</h2>
-                    <Players players={this.state.john.pendingPlayers} playersNames={this.state.pendingPlayersNames}></Players>
-                    <h2>Players</h2>
-                    <Players players={this.state.players} playersNames={this.state.playersNames}></Players>
                     <button type="button" onClick={() => {this.leaveJohn()}}>Leave John</button>
+                    <hr/>
+                    {(this.state.john.creator.toString() == this.props.user.identifier || this.state.players.includes(this.props.user.identifier as never) ?
+                            (<div>
+                                <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
+                            </div>)
+                            : (<div></div>)
+                    )}
                 </div>) :
                 (<div>
                     <table style={{width: "100vw"}}>
