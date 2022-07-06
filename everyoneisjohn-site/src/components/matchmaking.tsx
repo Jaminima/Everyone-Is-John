@@ -79,8 +79,8 @@ class Matchmaking extends React.Component<any, any>{
     createJohn(){
         let that = this;
         doFetch("john/new", "POST", (d)=>{
-            that.setState({john: d, inJohn: true})
             if (isLocalhost) localStorage.setItem("johnId",d["identifier"])
+            that.getJohn();
         },(d)=>{
 
         })
@@ -108,8 +108,11 @@ class Matchmaking extends React.Component<any, any>{
     }
 
     leaveJohn(){
-        this.setState({john: null, inJohn: false})
-        if (isLocalhost) localStorage.removeItem("johnId");
+        doFetch("john/leave", "POST", (d)=>{
+            this.setState({john: null, inJohn: false})
+            if (isLocalhost) localStorage.removeItem("johnId");
+        },(d)=>{
+        })
     }
 
     render() {

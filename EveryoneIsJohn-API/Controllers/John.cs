@@ -107,6 +107,29 @@ namespace EveryoneIsJohn_API.Controllers
             return Problem("No Login", statusCode: 401);
         }
 
+        [HttpPost("leave")]
+        public IActionResult LeaveJohn()
+        {
+            if (Authentication.CheckAuth(Request, out var user))
+            {
+                if (FindJohn(Request, out var john))
+                {
+                    if (john.Creator != user.Identifier)
+                    {
+                        john.pendingPlayers.Remove(user.Identifier);
+                        john.players.RemoveAll(x => x.User == user.Identifier);
+                    }
+                    else
+                    {
+                        Data.Stores.johnStore.Remove(john.Identifier);
+                    }
+                    return Ok();
+                }
+                return Problem("Cannot Find John", statusCode: 400);
+            }
+            return Problem("No Login", statusCode: 401);
+        }
+
         [HttpPost("players")]
         public IActionResult ManagePlayers([FromQuery] string player, [FromQuery] bool accept = false, [FromQuery] bool kick = false)
         {
