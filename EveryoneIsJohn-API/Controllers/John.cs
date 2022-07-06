@@ -115,8 +115,7 @@ namespace EveryoneIsJohn_API.Controllers
                 Data.Objects.John john;
                 if (FindJohn(Request, out john) && int.TryParse(player, out int playerId))
                 {
-#warning ignores creator
-                    if (john.Creator == user.Identifier || true)
+                    if (john.Creator == user.Identifier)
                     {
                         if (accept)
                         {
@@ -142,11 +141,11 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("start")]
-        public IActionResult StartJohn(string id)
+        public IActionResult StartJohn()
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (FindJohn(Request, out var john, id))
+                if (FindJohn(Request, out var john))
                 {
                     if (john.Creator == user.Identifier || true)
                     {
@@ -158,6 +157,7 @@ namespace EveryoneIsJohn_API.Controllers
                             }
                         }
                         john.isPlaying = true;
+                        return Ok();
                     }
                     return Problem("This is not your John", statusCode: 401);
                 }

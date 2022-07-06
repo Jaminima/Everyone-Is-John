@@ -19,6 +19,7 @@ class Matchmaking extends React.Component<any, any>{
     }
 
     state = {
+        gameError: "",
         joinIdentifier: "",
         inJohn: false,
         john:{
@@ -85,6 +86,16 @@ class Matchmaking extends React.Component<any, any>{
         })
     }
 
+    startJohn(){
+        let that = this;
+        doFetch("john/start", "POST", (d)=>{
+            that.getJohn();
+        },(d)=>{
+            that.setState({gameError: d["detail"]})
+
+        })
+    }
+
     joinJohn(){
         let that = this;
         doFetch("john/join/"+this.state.joinIdentifier, "POST", (d)=>{
@@ -105,8 +116,13 @@ class Matchmaking extends React.Component<any, any>{
         return (<div>
             {(this.state.inJohn ?
                 (<div>
-                    <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Pending Join To" : "Playing In")} Game - {this.state.john.identifier}</h2>
+                    <h1>Game - {this.state.john.identifier}</h1>
+                    <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Awaiting Join" : (this.state.john.isPlaying) ? "Playing" : "Awaiting Start")} </h2>
                     <h3>Character Name: {this.state.john.name}</h3>
+                    <p style={{color: "red"}}>{this.state.gameError}</p>
+                    {(this.state.john.creator.toString() == this.props.user.identifier ?
+                            (<button type="button" onClick={() => {this.startJohn()}}>Start John</button>):(<div/>)
+                    )}
                     <button type="button" onClick={() => {this.leaveJohn()}}>Leave John</button>
                     <hr/>
                     {(this.state.john.creator.toString() == this.props.user.identifier || this.state.players.includes(this.props.user.identifier as never) ?
