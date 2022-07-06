@@ -4,7 +4,11 @@ import {isLocalhost} from "../scripts/customFetch";
 
 class PlayerView extends React.Component<any, any>{
     props={
-        playerId: ""
+        playerId: "",
+        user: {
+            name: "",
+            identifier: ""
+        }
     }
 
     static defaultProps={
@@ -69,6 +73,7 @@ class PlayerView extends React.Component<any, any>{
     render() {
         return (<div>
             <h3>Player Details</h3>
+            <label>Name: </label><input value={this.props.user.name}/>
             <table style={{width: "100vw"}}>
                 <tbody>
                 <tr>

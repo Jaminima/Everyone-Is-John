@@ -48,10 +48,11 @@ class Players extends React.Component<any, any>{
         for (let i=0;i<this.props.matchmakingState.players.length;i++){
             let id = this.props.matchmakingState.players[i];
             let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
-            let missions = isOwner ? (<button type="button" onClick={()=>this.props.matchmaker.setState({viewingPlayer:id})}>Missions</button>) : (<a></a>)
+            let missions = isOwner ? (<button type="button" onClick={()=>this.props.matchmaker.setState({viewingPlayer:id})}>View</button>) : (<a></a>)
             let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
 
             rows.push((<tr key={i}>
+                <td>{id}</td>
                 <td>{this.props.matchmakingState.playersNames[i]}</td>
                 <td>{missions}</td>
                 <td>{kick}</td>
@@ -65,6 +66,7 @@ class Players extends React.Component<any, any>{
         for (let i=0;i<this.props.matchmakingState.john.pendingPlayers.length;i++){
             let id = this.props.matchmakingState.john.pendingPlayers[i];
             rows.push((<tr key={i}>
+                <td>{id}</td>
                 <td>Pending - {this.props.matchmakingState.pendingPlayersNames[i]}</td>
                 <td><button type="button" onClick={()=>this.acceptPlayer(id)}>Accept</button></td>
                 <td><button type="button" onClick={()=>this.kickPlayer(id)}>Reject</button></td>
@@ -79,6 +81,12 @@ class Players extends React.Component<any, any>{
                 <h2>Players</h2>
                 <table style={{width: "100vw"}}>
                     <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
                     {(this.props.matchmakingState.john.creator.toString()==this.props.user.identifier ? this.getPendingPlayersRows() : [])}
                     {this.getPlayersRows()}
                     </tbody>

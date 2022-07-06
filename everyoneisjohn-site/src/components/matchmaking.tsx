@@ -137,7 +137,7 @@ class Matchmaking extends React.Component<any, any>{
                             (<div>
                                 <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
                                 <hr/>
-                                <PlayerView playerId={this.state.viewingPlayer}></PlayerView>
+                                <PlayerView user={this.props.user} playerId={this.state.viewingPlayer}></PlayerView>
                             </div>)
                             : (<div></div>)
                     )}
