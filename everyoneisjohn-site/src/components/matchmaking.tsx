@@ -2,6 +2,7 @@ import React from "react";
 import doFetch from "../scripts/fetch";
 import customFetch, {isLocalhost} from "../scripts/customFetch";
 import Players from "./players";
+import PlayerView from "./playerView";
 
 class Matchmaking extends React.Component<any, any>{
     private first: boolean = true;
@@ -48,23 +49,27 @@ class Matchmaking extends React.Component<any, any>{
                     }
                 }
                 else{
-                    that.setState({
-                        joinIdentifier: "",
-                        inJohn: false,
-                        john:{
-                            creator: -1,
-                            isPlaying: false,
-                            name: "",
-                            pendingPlayers: [],
-                            identifier: ""
-                        },
-                        players: [],
-                        playersNames: [],
-                        pendingPlayersNames: []
-                    })
+                    that.reset();
                 }
             },(d)=>{
+            that.reset();
+        })
+    }
 
+    reset(){
+        this.setState({
+            joinIdentifier: "",
+            inJohn: false,
+            john:{
+                creator: -1,
+                isPlaying: false,
+                name: "",
+                pendingPlayers: [],
+                identifier: ""
+            },
+            players: [],
+            playersNames: [],
+            pendingPlayersNames: []
         })
     }
 
@@ -99,9 +104,8 @@ class Matchmaking extends React.Component<any, any>{
     joinJohn(){
         let that = this;
         doFetch("john/join/"+this.state.joinIdentifier, "POST", (d)=>{
-            that.getJohn();
-
             if (isLocalhost) localStorage.setItem("johnId",d["identifier"])
+            that.getJohn();
         },(d)=>{
 
         })
@@ -131,6 +135,8 @@ class Matchmaking extends React.Component<any, any>{
                     {(this.state.john.creator.toString() == this.props.user.identifier || this.state.players.includes(this.props.user.identifier as never) ?
                             (<div>
                                 <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
+                                <hr/>
+                                <PlayerView></PlayerView>
                             </div>)
                             : (<div></div>)
                     )}

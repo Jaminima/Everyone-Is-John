@@ -16,7 +16,7 @@ namespace EveryoneIsJohn_API.Controllers
 
         public static bool FindJohn(HttpRequest request, out Data.Objects.John john, string id = "")
         {
-            if (id.Length == 0)
+            if (id == null || id.Length == 0)
             {
                 if (request.Cookies.TryGetValue("johnId", out string johnid)) id = johnid;
                 if (request.Headers.TryGetValue("johnId", out var jid)) id = jid.ToString();

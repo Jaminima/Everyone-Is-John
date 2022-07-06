@@ -10,11 +10,11 @@ namespace EveryoneIsJohn_API.Controllers
         #region Methods
 
         [HttpGet("")]
-        public IActionResult GetPlayer()
+        public IActionResult GetPlayer([FromQuery] string? id = "")
         {
             if (Authentication.CheckAuth(Request, out var user))
             {
-                if (John.FindJohn(Request, out var john))
+                if (John.FindJohn(Request, out var john, id))
                 {
                     if (john.GetPlayer(user, out var player))
                     {
