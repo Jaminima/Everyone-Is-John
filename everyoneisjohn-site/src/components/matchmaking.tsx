@@ -33,11 +33,18 @@ class Matchmaking extends React.Component<any, any>{
         pendingPlayersNames: []
     }
 
+    private johnUpdater: NodeJS.Timer | undefined;
+
     getJohn(){
         let that = this;
         customFetch("john", (d)=>{
                 if (d["john"]["creator"] == that.props.user.identifier || d["players"].includes(that.props.user.identifier) || d["john"]["pendingPlayers"].includes(that.props.user.identifier)){
                     that.setState({john: d["john"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
+                    if (that.johnUpdater == undefined) {
+                        that.johnUpdater = setInterval(() => {
+                            that.getJohn()
+                        }, 15000);
+                    }
                 }
                 else{
                     that.setState({
