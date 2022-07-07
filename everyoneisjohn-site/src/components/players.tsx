@@ -16,7 +16,16 @@ class Players extends React.Component<any, any>{
             identifier: ""
         },
         matchmakingState:{
-            fullPlayers:[],
+            fullPlayers:[
+                {user: -1,
+                    missions:[{
+                        desc: "Example",
+                        acheived: 0,
+                        idx: 0,
+                        level: 0,
+                        suggestedAcheived: 0
+                    }]}
+            ],
             john:{
                 creator: -1,
                 isPlaying: false,
@@ -28,6 +37,10 @@ class Players extends React.Component<any, any>{
             playersNames: [],
             pendingPlayersNames: []
         }
+    }
+
+    state={
+        viewPlayerId: -1
     }
 
     kickPlayer(playerId: any){
@@ -48,18 +61,26 @@ class Players extends React.Component<any, any>{
         });
     }
 
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
+        if (this.state.viewPlayerId!=-1){
+            let idx = this.props.matchmakingState.fullPlayers.findIndex(x=>x.user);
+
+            this.props.matchmaker.playerViewRef.current?.setState({newName: this.props.matchmakingState.playersNames[idx],player:this.props.matchmakingState.fullPlayers[idx]});
+        }
+    }
+
     getPlayersRows(){
         let rows = [];
         for (let i=0;i<this.props.matchmakingState.players.length;i++){
             let id = this.props.matchmakingState.players[i];
+            let name = this.props.matchmakingState.playersNames[i];
             let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
-            let missions = isOwner ? (<button type="button" onClick={()=>
-                this.props.matchmaker.setState({viewingPlayer:this.props.matchmakingState.fullPlayers[i]})}>View</button>) : (<a></a>)
-            let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
+            let missions = isOwner ? (<button type="button" onClick={()=>this.setState({viewPlayerId: id})}>View</button>) : (<a></a>)
+                let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
 
             rows.push((<tr key={i}>
                 <td>{id}</td>
-                <td>{this.props.matchmakingState.playersNames[i]}</td>
+                <td>{name}</td>
                 <td>{missions}</td>
                 <td>{kick}</td>
             </tr>));

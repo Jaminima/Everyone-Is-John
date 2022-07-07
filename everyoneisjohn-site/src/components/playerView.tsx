@@ -10,16 +10,7 @@ class PlayerView extends React.Component<any, any>{
     }
 
     props={
-        viewingPlayer: {
-            user: -1,
-            missions:[{
-                desc: "Example",
-                acheived: 0,
-                idx: 0,
-                level: 0,
-                suggestedAcheived: 0
-            }]
-        },
+        ownJohn: false,
         user: {
             name: "",
             identifier: ""
@@ -47,9 +38,6 @@ class PlayerView extends React.Component<any, any>{
     public ignoreUpdate: boolean = false;
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (prevProps.viewingPlayer.user!=this.props.viewingPlayer.user){
-            this.ignoreUpdate=false;
-        }
         if (!this.ignoreUpdate) {
             this.getPlayer();
             this.ignoreUpdate = true;
@@ -73,7 +61,8 @@ class PlayerView extends React.Component<any, any>{
 
     getPlayer(){
         let that = this;
-        doFetch("player?id="+(that.props.viewingPlayer.user!=-1 ? that.props.viewingPlayer.user.toString() : ""), "GET", (d)=>{
+        if (this.props.ownJohn) return;
+        doFetch("player?id="+(that.state.player.user!=-1 ? that.state.player.user.toString() : ""), "GET", (d)=>{
             that.ignoreUpdate = true;
             if (that.mainLoad) {
                 that.mainLoad = false;
