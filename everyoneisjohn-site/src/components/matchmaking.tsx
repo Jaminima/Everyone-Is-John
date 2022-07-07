@@ -6,10 +6,12 @@ import PlayerView from "./playerView";
 
 class Matchmaking extends React.Component<any, any>{
     private first: boolean = true;
+    private playerViewRef: React.RefObject<PlayerView>;
 
     constructor(props:any) {
         super(props);
         this.props=props;
+        this.playerViewRef = React.createRef<PlayerView>();
     }
 
     props={
@@ -137,7 +139,7 @@ class Matchmaking extends React.Component<any, any>{
                             (<div>
                                 <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
                                 <hr/>
-                                <PlayerView user={this.props.user} playerId={this.state.viewingPlayer}></PlayerView>
+                                <PlayerView ref={this.playerViewRef} user={this.props.user} playerId={this.state.viewingPlayer}></PlayerView>
                             </div>)
                             : (<div></div>)
                     )}

@@ -4,6 +4,10 @@ import Matchmaking from "./matchmaking";
 import matchmaking from "./matchmaking";
 
 class Players extends React.Component<any, any>{
+    constructor(props:any) {
+        super(props);
+        this.props = props;
+    }
 
     props={
         matchmaker: {} as matchmaking,
