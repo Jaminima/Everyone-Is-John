@@ -26,6 +26,7 @@ class Matchmaking extends React.Component<any, any>{
         joinIdentifier: "",
         inJohn: false,
         ownJohn: false,
+        ownerName: "",
         john:{
             creator: -1,
             isPlaying: false,
@@ -45,7 +46,7 @@ class Matchmaking extends React.Component<any, any>{
         let that = this;
         customFetch("john", (d)=>{
                 if (d["john"]["creator"] == that.props.user.identifier || d["players"].includes(that.props.user.identifier) || d["john"]["pendingPlayers"].includes(that.props.user.identifier)){
-                    that.setState({john: d["john"], ownJohn: d["john"]["creator"]==that.props.user.identifier, fullPlayers: d["fullPlayers"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
+                    that.setState({john: d["john"], ownerName: d["ownerName"], ownJohn: d["john"]["creator"]==that.props.user.identifier, fullPlayers: d["fullPlayers"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
                     if (that.johnUpdater == undefined) {
                         that.johnUpdater = setInterval(() => {
                             that.getJohn()
@@ -65,6 +66,7 @@ class Matchmaking extends React.Component<any, any>{
                 joinIdentifier: "",
                 inJohn: false,
                 fullPlayers: [],
+                ownerName: "",
                 john: {
                     creator: -1,
                     isPlaying: false,
@@ -131,7 +133,7 @@ class Matchmaking extends React.Component<any, any>{
                 (<div>
                     <h2>Game - {this.state.john.identifier}</h2>
                     <h3>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Awaiting Join" : (this.state.john.isPlaying) ? "Playing" : "Awaiting Start")} </h3>
-                    <h4>Character Name: {this.state.john.name}</h4>
+                    <h4>{this.state.john.name} Created By {this.state.ownerName}</h4>
                     <p style={{color: "red"}}>{this.state.gameError}</p>
                     {(this.state.john.creator.toString() == this.props.user.identifier ?
                             (<button type="button" onClick={() => {this.startJohn()}}>Start John</button>):(<div/>)

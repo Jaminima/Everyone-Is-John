@@ -77,7 +77,7 @@ namespace EveryoneIsJohn_API.Controllers
                         }
                         return "Id - " + u.Identifier;
                     });
-                    return new JsonResult(new { john = john, players = plers, playersNames = plersNames, pendingPlayersNames = pendingPlayers, fullPlayers = user.Identifier == john.Creator ? john.players : null });
+                    return new JsonResult(new { john = john, ownerName = Data.Stores.userStore.Get(john.Creator, out var u) ? u.Name : "", players = plers, playersNames = plersNames, pendingPlayersNames = pendingPlayers, fullPlayers = user.Identifier == john.Creator ? john.players : null });
                 }
                 return Problem("No Provided John Id", statusCode: 400);
             }
