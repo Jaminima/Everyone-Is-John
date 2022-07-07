@@ -31,24 +31,28 @@ namespace EveryoneIsJohn_API.Controllers
             return Problem("No login", statusCode: 401);
         }
 
-        [HttpPost("score/ignoresuggested")]
-        public IActionResult IgnoreSuggestedScoreMission([FromQuery] string player, [FromQuery] string idx, [FromQuery] bool decrement = false)
+        [HttpPost("score/ignoresuggested/{idx}")]
+        public IActionResult IgnoreSuggestedScoreMission(string idx, [FromQuery] int playerId)
         {
-            if (int.TryParse(idx, out int Idx) && Idx >= 0 && Idx <= 4 && int.TryParse(player, out int playerId))
+            if (int.TryParse(idx, out int Idx) && Idx >= 0 && Idx <= 4)
             {
                 if (Authentication.CheckAuth(Request, out var user))
                 {
                     if (John.FindJohn(Request, out var john))
                     {
-                        if (john.Creator == user.Identifier)
+                        if (john.isPlaying)
                         {
-                            if (john.GetPlayer(playerId, out var _player))
+                            if (john.Creator == user.Identifier)
                             {
-                                _player.missions[Idx].suggestedAcheived = _player.missions[Idx].acheived;
-                                return new JsonResult(_player);
+                                if (john.GetPlayer(playerId, out var _player))
+                                {
+                                    _player.missions[Idx].suggestedAcheived = _player.missions[Idx].acheived;
+                                    return new JsonResult(_player);
+                                }
                             }
+                            return Problem("You are not the Johns creator", statusCode: 401);
                         }
-                        return Problem("You are not the Johns creator", statusCode: 401);
+                        return Problem("Cant change while John isnt playing", statusCode: 406);
                     }
                     return Problem("No attached John", statusCode: 400);
                 }
@@ -66,19 +70,23 @@ namespace EveryoneIsJohn_API.Controllers
                 {
                     if (John.FindJohn(Request, out var john))
                     {
-                        if (john.GetPlayer(playerId, out var player))
+                        if (john.isPlaying)
                         {
-                            if (user.Identifier == john.Creator)
+                            if (john.GetPlayer(playerId, out var player))
                             {
-                                player.missions[Idx].acheived += decrement ? -1 : 1;
+                                if (user.Identifier == john.Creator)
+                                {
+                                    player.missions[Idx].acheived += decrement ? -1 : 1;
+                                }
+                                else if (user.Identifier == player.User)
+                                {
+                                    player.missions[Idx].suggestedAcheived += decrement ? -1 : 1;
+                                }
+                                return new JsonResult(player);
                             }
-                            else if (user.Identifier == player.User)
-                            {
-                                player.missions[Idx].suggestedAcheived += decrement ? -1 : 1;
-                            }
-                            return new JsonResult(player);
+                            return Problem("You are not a Player", statusCode: 401);
                         }
-                        return Problem("You are not a Player", statusCode: 401);
+                        return Problem("Cant change while John isnt playing", statusCode: 406);
                     }
                     return Problem("No attached John", statusCode: 400);
                 }

@@ -21,6 +21,7 @@ class PlayerView extends React.Component<any, any>{
     }
 
     state={
+        playerError: "",
         player: {
             user: -1,
             missions:[{
@@ -96,14 +97,30 @@ class PlayerView extends React.Component<any, any>{
     }
 
     incrementScore(idx: number,decrement=false){
+        let that = this;
         doFetch("player/score/"+idx+"?playerId="+this.state.player.user+"&decrement="+(decrement?"true":"false"), "POST",
             (d)=>{
-                let plr = this.state.player;
+                let plr = that.state.player;
                 plr.missions =  d["missions"];
-                this.setState({player: plr});
+                that.setState({player: plr});
             },
             (d)=>{
+                that.setState({playerError: d["detail"]});
+                setTimeout(()=>{that.setState({playerError: ""})},10000);
+            });
+    }
 
+    ignoreScore(idx: number){
+        let that = this;
+        doFetch("player/score/ignoresuggested/"+idx+"?playerId="+this.state.player.user, "POST",
+            (d)=>{
+                let plr = that.state.player;
+                plr.missions =  d["missions"];
+                that.setState({player: plr});
+            },
+            (d)=>{
+                that.setState({playerError: d["detail"]});
+                setTimeout(()=>{that.setState({playerError: ""})},10000);
             });
     }
 
@@ -113,11 +130,12 @@ class PlayerView extends React.Component<any, any>{
             let e = this.state.player.missions[i];
             let sp = (<button type="button" onClick={()=>this.incrementScore(i,false)}>+</button>);
             let sm = (<button type="button" onClick={()=>this.incrementScore(i,true)}>-</button>);
+            let si = (<button type="button" onClick={()=>this.ignoreScore(i)}>Ignore</button>);
             rows.push((<tr key={i}>
                 <td><textarea onChange={(e) => this.updateMission(i, e.target.value)} readOnly={this.props.ownJohn} value={e.desc}/></td>
                 <td><input onChange={(e)=>this.updateMission(i,undefined,e.target.value)} readOnly={this.props.ownJohn} value={e.level}/></td>
                 <td>{this.props.ownJohn?sp:null}{e.acheived}{this.props.ownJohn?sm:null}</td>
-                <td>{!this.props.ownJohn?sp:null}{e.suggestedAcheived}{!this.props.ownJohn?sm:null}</td>
+                <td>{!this.props.ownJohn?sp:null}{e.suggestedAcheived}{!this.props.ownJohn?sm:si}</td>
             </tr>))
         }
         return rows;
@@ -130,7 +148,8 @@ class PlayerView extends React.Component<any, any>{
 
             },
             (d)=>{
-
+                that.setState({playerError: d["detail"]});
+                setTimeout(()=>{that.setState({playerError: ""})},10000);
             },
             {},
             that.state.player.missions
@@ -138,8 +157,9 @@ class PlayerView extends React.Component<any, any>{
     }
 
     render() {
-        return (<div>
+        return this.state.player.user!=-1 ? (<div>
             <h3>Player Details</h3>
+            <a style={{color: "orangered"}}>{this.state.playerError}</a>
             <table style={{width: "100vw"}} className="players">
                 <tbody>
                 <tr>
@@ -152,7 +172,7 @@ class PlayerView extends React.Component<any, any>{
                 </tbody>
             </table>
             <button type="button" onClick={()=>{this.save()}}>Update</button>
-        </div>)
+        </div>) : (<div></div>);
     }
 }
 
