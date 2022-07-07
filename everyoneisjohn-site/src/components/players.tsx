@@ -1,32 +1,28 @@
 import React from "react";
 import doFetch from "../scripts/fetch";
-import Matchmaking from "./matchmaking";
 import matchmaking from "./matchmaking";
 
-class Players extends React.Component<any, any>{
-    constructor(props:any) {
-        super(props);
-        this.props = props;
-    }
-
-    props={
+class Players extends React.Component<any, any> {
+    props = {
         matchmaker: {} as matchmaking,
         user: {
             name: "",
             identifier: ""
         },
-        matchmakingState:{
-            fullPlayers:[
-                {user: -1,
-                    missions:[{
+        matchmakingState: {
+            fullPlayers: [
+                {
+                    user: -1,
+                    missions: [{
                         desc: "Example",
                         acheived: 0,
                         idx: 0,
                         level: 0,
                         suggestedAcheived: 0
-                    }]}
+                    }]
+                }
             ],
-            john:{
+            john: {
                 creator: -1,
                 isPlaying: false,
                 name: "",
@@ -38,48 +34,57 @@ class Players extends React.Component<any, any>{
             pendingPlayersNames: []
         }
     }
-
-    state={
+    state = {
         viewPlayerId: -1
     }
 
-    kickPlayer(playerId: any){
+    constructor(props: any) {
+        super(props);
+        this.props = props;
+    }
+
+    kickPlayer(playerId: any) {
         let that = this;
-        doFetch("john/players?kick=true&player="+playerId, "POST",(d)=>{
+        doFetch("john/players?kick=true&player=" + playerId, "POST", (d) => {
             that.props.matchmaker.getJohn();
-        },(d)=>{
+        }, (d) => {
 
         });
     }
 
-    acceptPlayer(playerId: any){
+    acceptPlayer(playerId: any) {
         let that = this;
-        doFetch("john/players?accept=true&player="+playerId, "POST",(d)=>{
+        doFetch("john/players?accept=true&player=" + playerId, "POST", (d) => {
             that.props.matchmaker.getJohn();
-        },(d)=>{
+        }, (d) => {
 
         });
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
-        if (this.state.viewPlayerId!=-1){
-            let idx = this.props.matchmakingState.fullPlayers.findIndex(x=>x.user==this.state.viewPlayerId);
+        if (this.state.viewPlayerId != -1) {
+            let idx = this.props.matchmakingState.fullPlayers.findIndex(x => x.user == this.state.viewPlayerId);
 
-            this.props.matchmaker.playerViewRef.current?.setState({newName: this.props.matchmakingState.playersNames[idx],player:this.props.matchmakingState.fullPlayers[idx]});
+            this.props.matchmaker.playerViewRef.current?.setState({
+                newName: this.props.matchmakingState.playersNames[idx],
+                player: this.props.matchmakingState.fullPlayers[idx]
+            });
         }
     }
 
-    getPlayersRows(){
+    getPlayersRows() {
         let rows = [];
-        for (let i=0;i<this.props.matchmakingState.players.length;i++){
+        for (let i = 0; i < this.props.matchmakingState.players.length; i++) {
             let id = this.props.matchmakingState.players[i];
-            let fullPlayer = this.props.matchmakingState.fullPlayers!= null ? this.props.matchmakingState.fullPlayers.find(x=>x.user==id) : null;
+            let fullPlayer = this.props.matchmakingState.fullPlayers != null ? this.props.matchmakingState.fullPlayers.find(x => x.user == id) : null;
             let name = this.props.matchmakingState.playersNames[i];
-            let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
-            let missions = isOwner ? (<button type="button" onClick={()=>this.setState({viewPlayerId: id})}>View</button>) : (<a></a>)
-                let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
+            let isOwner = this.props.matchmakingState.john.creator.toString() == this.props.user.identifier;
+            let missions = isOwner ? (
+                <button type="button" onClick={() => this.setState({viewPlayerId: id})}>View</button>) : (<a></a>)
+            let kick = isOwner ? (<button type="button" onClick={() => this.kickPlayer(id)}>Kick</button>) : (<a></a>)
 
-            rows.push((<tr key={i} style={{backgroundColor: (fullPlayer!=null && fullPlayer.missions.some(x=>x.acheived!=x.suggestedAcheived) ? "orange" : "inherit" )}}>
+            rows.push((<tr key={i}
+                           style={{backgroundColor: (fullPlayer != null && fullPlayer.missions.some(x => x.acheived != x.suggestedAcheived) ? "orange" : "inherit")}}>
                 <td>{id}</td>
                 <td>{name}</td>
                 <td>{missions}</td>
@@ -89,15 +94,19 @@ class Players extends React.Component<any, any>{
         return rows;
     }
 
-    getPendingPlayersRows(){
+    getPendingPlayersRows() {
         let rows = [];
-        for (let i=0;i<this.props.matchmakingState.john.pendingPlayers.length;i++){
+        for (let i = 0; i < this.props.matchmakingState.john.pendingPlayers.length; i++) {
             let id = this.props.matchmakingState.john.pendingPlayers[i];
             rows.push((<tr key={i}>
                 <td>{id}</td>
                 <td>Pending - {this.props.matchmakingState.pendingPlayersNames[i]}</td>
-                <td><button type="button" onClick={()=>this.acceptPlayer(id)}>Accept</button></td>
-                <td><button type="button" onClick={()=>this.kickPlayer(id)}>Reject</button></td>
+                <td>
+                    <button type="button" onClick={() => this.acceptPlayer(id)}>Accept</button>
+                </td>
+                <td>
+                    <button type="button" onClick={() => this.kickPlayer(id)}>Reject</button>
+                </td>
             </tr>));
         }
         return rows;
@@ -115,7 +124,7 @@ class Players extends React.Component<any, any>{
                         <th></th>
                         <th></th>
                     </tr>
-                    {(this.props.matchmakingState.john.creator.toString()==this.props.user.identifier ? this.getPendingPlayersRows() : [])}
+                    {(this.props.matchmakingState.john.creator.toString() == this.props.user.identifier ? this.getPendingPlayersRows() : [])}
                     {this.getPlayersRows()}
                     </tbody>
                 </table>

@@ -1,4 +1,4 @@
-export let isLocalhost =  document.location.href.includes("localhost");
+export let isLocalhost = document.location.href.includes("localhost");
 
 export let preUrl = isLocalhost ? "https://localhost:7257/api/" : "https://portalapi.etherlive.com/api/";
 

@@ -3,11 +3,9 @@ import {checkAuth, login} from "../scripts/auth";
 import Matchmaking from "./matchmaking";
 import doFetch from "../scripts/fetch";
 
-class Game extends React.Component<any, any>{
+class Game extends React.Component<any, any> {
 
-    private first : boolean = true;
-
-    state={
+    state = {
         loaded: false,
         user: {
             name: "",
@@ -18,12 +16,13 @@ class Game extends React.Component<any, any>{
         colorG: 0,
         colorB: 127
     }
+    private first: boolean = true;
 
     componentDidMount() {
         let that = this;
         if (this.first) {
-            this.first=false;
-            checkAuth().then((d:any) => {
+            this.first = false;
+            checkAuth().then((d: any) => {
                 that.setState({user: d, loaded: true});
             }).catch(() => {
                 login("").then((d: any) => {
@@ -34,26 +33,26 @@ class Game extends React.Component<any, any>{
             })
         }
 
-        setInterval(()=>{
+        setInterval(() => {
             let s = that.state;
 
-            s.colorR += s.colorI==0 ? -1 : (s.colorI==2 ? 1 : 0);
-            s.colorG += s.colorI==1 ? -1 : (s.colorI==0 ? 1 : 0);
-            s.colorB += s.colorI==2 ? -1 : (s.colorI==1 ? 1 : 0);
+            s.colorR += s.colorI == 0 ? -1 : (s.colorI == 2 ? 1 : 0);
+            s.colorG += s.colorI == 1 ? -1 : (s.colorI == 0 ? 1 : 0);
+            s.colorB += s.colorI == 2 ? -1 : (s.colorI == 1 ? 1 : 0);
 
-            if (s.colorR==255 || s.colorG==255 || s.colorB == 255) s.colorI=(s.colorI+1)%3;
+            if (s.colorR == 255 || s.colorG == 255 || s.colorB == 255) s.colorI = (s.colorI + 1) % 3;
 
             that.setState(s);
-        },50)
+        }, 50)
     }
 
-    updateName(){
+    updateName() {
         let that = this;
-        doFetch("authentication/update?name="+this.state.user.name,"post",
-            (d)=>{
+        doFetch("authentication/update?name=" + this.state.user.name, "post",
+            (d) => {
                 that.setState({user: d});
             },
-            (d)=>{
+            (d) => {
                 that.setState({user: d});
             })
     }
@@ -61,14 +60,21 @@ class Game extends React.Component<any, any>{
     render() {
         return (<div>
             {(this.state.loaded ?
-                (<div>
-                    <h1>Everyone Is <span style={{color: "rgb("+this.state.colorR+","+this.state.colorG+","+this.state.colorB+")"}}><em>John</em></span></h1>
-                    <label>Name: </label><input onChange={(e)=>this.setState({user: {name: e.target.value, identifier: this.state.user.identifier}})} value={this.state.user.name}/>
-                    <button type="button" onClick={()=>this.updateName()}>Update Name</button>
-                    <hr/>
-                    <Matchmaking user={this.state.user}></Matchmaking>
-                </div>)
-                :(<h3>No Login Yet.</h3>)
+                    (<div>
+                        <h1>Everyone Is <span
+                            style={{color: "rgb(" + this.state.colorR + "," + this.state.colorG + "," + this.state.colorB + ")"}}><em>John</em></span>
+                        </h1>
+                        <label>Name: </label><input onChange={(e) => this.setState({
+                        user: {
+                            name: e.target.value,
+                            identifier: this.state.user.identifier
+                        }
+                    })} value={this.state.user.name}/>
+                        <button type="button" onClick={() => this.updateName()}>Update Name</button>
+                        <hr/>
+                        <Matchmaking user={this.state.user}></Matchmaking>
+                    </div>)
+                    : (<h3>No Login Yet.</h3>)
             )}
         </div>);
     }
