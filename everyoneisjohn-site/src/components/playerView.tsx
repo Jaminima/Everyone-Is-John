@@ -21,7 +21,6 @@ class PlayerView extends React.Component<any, any>{
     }
 
     state={
-        newName: "",
         player: {
             user: -1,
             missions:[{
@@ -53,8 +52,13 @@ class PlayerView extends React.Component<any, any>{
     softMergePlayer(d:any){
         let plr = this.state.player;
         for (let i=0;i<d.missions.length;i++){
-            plr.missions[i].acheived = d.missions[0].acheived;
-            plr.missions[i].suggestedAcheived = d.missions[0].suggestedAcheived;
+            if (plr.missions.length<=i){
+                plr.missions.push(d.missions[i])
+            }
+            else{
+                plr.missions[i].acheived = d.missions[i].acheived;
+                plr.missions[i].suggestedAcheived = d.missions[i].suggestedAcheived;
+            }
         }
         this.setState({player: plr});
     }
@@ -107,12 +111,6 @@ class PlayerView extends React.Component<any, any>{
 
     save(){
         let that = this;
-        doFetch("authentication/update?name="+this.state.newName,"post",
-            (d)=>{
-            },
-            (d)=>{
-
-            })
         doFetch("player/missions", "POST",
             (d)=>{
 
@@ -128,7 +126,6 @@ class PlayerView extends React.Component<any, any>{
     render() {
         return (<div>
             <h3>Player Details</h3>
-            <label>Name: </label><input onChange={(e)=>this.setState({newName: e.target.value})} value={this.state.newName}/>
             <table style={{width: "100vw"}} className="players">
                 <tbody>
                 <tr>

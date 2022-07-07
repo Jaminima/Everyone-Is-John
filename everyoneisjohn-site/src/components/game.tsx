@@ -1,6 +1,7 @@
 import React from "react";
 import {checkAuth, login} from "../scripts/auth";
 import Matchmaking from "./matchmaking";
+import doFetch from "../scripts/fetch";
 
 class Game extends React.Component<any, any>{
 
@@ -46,12 +47,23 @@ class Game extends React.Component<any, any>{
         },50)
     }
 
+    updateName(){
+        doFetch("authentication/update?name="+this.state.user.name,"post",
+            (d)=>{
+            },
+            (d)=>{
+
+            })
+    }
+
     render() {
         return (<div>
             {(this.state.loaded ?
                 (<div>
                     <h1>Everyone Is <span style={{color: "rgb("+this.state.colorR+","+this.state.colorG+","+this.state.colorB+")"}}><em>John</em></span></h1>
                     <hr/>
+                    <label>Name: </label><input onChange={(e)=>this.setState({user: {name: e.target.value, identifier: this.state.user.identifier}})} value={this.state.user.name}/>
+                    <button type="button" onClick={()=>this.updateName()}>Update Name</button>
                     <Matchmaking user={this.state.user}></Matchmaking>
                 </div>)
                 :(<h3>No Login Yet.</h3>)
