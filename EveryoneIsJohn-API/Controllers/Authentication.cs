@@ -85,7 +85,21 @@ namespace EveryoneIsJohn_API.Controllers
         {
             if (CheckAuth(Request, out var user))
             {
-                if (name != null && name.Length > 0) user.Name = name;
+                if (John.FindJohn(Request, out var john))
+                {
+                    if (!john.isPlaying)
+                    {
+                        if (name != null && name.Length > 0) user.Name = name;
+                    }
+                    else
+                    {
+                        return Problem("Cant change while John is playing", statusCode: 406);
+                    }
+                }
+                else
+                {
+                    if (name != null && name.Length > 0) user.Name = name;
+                }
                 return new JsonResult(user);
             }
             return Problem("No Login", statusCode: 401);

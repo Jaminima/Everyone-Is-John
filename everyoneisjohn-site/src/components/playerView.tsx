@@ -97,8 +97,8 @@ class PlayerView extends React.Component<any, any>{
         for (let i=0;i<this.state.player.missions.length;i++){
             let e = this.state.player.missions[i];
             rows.push((<tr key={i}>
-                <td><textarea onChange={(e) => this.updateMission(i, e.target.value)} value={e.desc}/></td>
-                <td><input onChange={(e)=>this.updateMission(i,undefined,e.target.value)} value={e.level}/></td>
+                <td><textarea onChange={(e) => this.updateMission(i, e.target.value)} readOnly={this.props.ownJohn} value={e.desc}/></td>
+                <td><input onChange={(e)=>this.updateMission(i,undefined,e.target.value)} readOnly={this.props.ownJohn} value={e.level}/></td>
                 <td>{e.acheived}</td>
             </tr>))
         }
@@ -113,6 +113,16 @@ class PlayerView extends React.Component<any, any>{
             (d)=>{
 
             })
+        doFetch("player/missions", "POST",
+            (d)=>{
+
+            },
+            (d)=>{
+
+            },
+            {},
+            that.state.player.missions
+            )
     }
 
     render() {

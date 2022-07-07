@@ -63,7 +63,7 @@ class Players extends React.Component<any, any>{
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any) {
         if (this.state.viewPlayerId!=-1){
-            let idx = this.props.matchmakingState.fullPlayers.findIndex(x=>x.user);
+            let idx = this.props.matchmakingState.fullPlayers.findIndex(x=>x.user==this.state.viewPlayerId);
 
             this.props.matchmaker.playerViewRef.current?.setState({newName: this.props.matchmakingState.playersNames[idx],player:this.props.matchmakingState.fullPlayers[idx]});
         }
