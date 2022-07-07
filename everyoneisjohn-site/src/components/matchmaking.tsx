@@ -32,10 +32,18 @@ class Matchmaking extends React.Component<any, any>{
             pendingPlayers: [],
             identifier: ""
         },
+        fullPlayers: [],
         players: [],
         playersNames: [],
         pendingPlayersNames: [],
-        viewingPlayer: ""
+        viewingPlayer: {user: -1,
+            missions:[{
+                desc: "Example",
+                acheived: 0,
+                idx: 0,
+                level: 0,
+                suggestedAcheived: 0
+            }]}
     }
 
     private johnUpdater: NodeJS.Timer | undefined;
@@ -44,7 +52,7 @@ class Matchmaking extends React.Component<any, any>{
         let that = this;
         customFetch("john", (d)=>{
                 if (d["john"]["creator"] == that.props.user.identifier || d["players"].includes(that.props.user.identifier) || d["john"]["pendingPlayers"].includes(that.props.user.identifier)){
-                    that.setState({john: d["john"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
+                    that.setState({john: d["john"], fullPlayers: d["fullPlayers"], players: d["players"], playersNames: d["playersNames"], pendingPlayersNames: d["pendingPlayersNames"], inJohn: true})
                     if (that.johnUpdater == undefined) {
                         that.johnUpdater = setInterval(() => {
                             that.getJohn()
@@ -61,19 +69,29 @@ class Matchmaking extends React.Component<any, any>{
 
     reset(){
         this.setState({
-            joinIdentifier: "",
-            inJohn: false,
-            john:{
-                creator: -1,
-                isPlaying: false,
-                name: "",
-                pendingPlayers: [],
-                identifier: ""
-            },
-            players: [],
-            playersNames: [],
-            pendingPlayersNames: []
-        })
+                joinIdentifier: "",
+                inJohn: false,
+                fullPlayers: [],
+                john: {
+                    creator: -1,
+                    isPlaying: false,
+                    name: "",
+                    pendingPlayers: [],
+                    identifier: ""
+                },
+                players: [],
+                playersNames: [],
+                pendingPlayersNames: [],
+                viewingPlayer: {user: -1,
+                    missions:[{
+                        desc: "Example",
+                        acheived: 0,
+                        idx: 0,
+                        level: 0,
+                        suggestedAcheived: 0
+                    }]}
+            }
+        )
     }
 
     componentDidMount() {
@@ -139,7 +157,7 @@ class Matchmaking extends React.Component<any, any>{
                             (<div>
                                 <Players matchmaker={this} user={this.props.user} matchmakingState={this.state}></Players>
                                 <hr/>
-                                <PlayerView ref={this.playerViewRef} user={this.props.user} playerId={this.state.viewingPlayer}></PlayerView>
+                                <PlayerView ref={this.playerViewRef} user={this.props.user} viewingPlayer={this.state.viewingPlayer}></PlayerView>
                             </div>)
                             : (<div></div>)
                     )}

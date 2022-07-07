@@ -16,6 +16,7 @@ class Players extends React.Component<any, any>{
             identifier: ""
         },
         matchmakingState:{
+            fullPlayers:[],
             john:{
                 creator: -1,
                 isPlaying: false,
@@ -52,7 +53,8 @@ class Players extends React.Component<any, any>{
         for (let i=0;i<this.props.matchmakingState.players.length;i++){
             let id = this.props.matchmakingState.players[i];
             let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
-            let missions = isOwner ? (<button type="button" onClick={()=>this.props.matchmaker.setState({viewingPlayer:id})}>View</button>) : (<a></a>)
+            let missions = isOwner ? (<button type="button" onClick={()=>
+                this.props.matchmaker.setState({viewingPlayer:this.props.matchmakingState.fullPlayers[i]})}>View</button>) : (<a></a>)
             let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
 
             rows.push((<tr key={i}>
