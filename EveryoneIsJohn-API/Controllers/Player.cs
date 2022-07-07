@@ -52,7 +52,7 @@ namespace EveryoneIsJohn_API.Controllers
                             }
                             return Problem("You are not the Johns creator", statusCode: 401);
                         }
-                        return Problem("Cant change while John isnt playing", statusCode: 406);
+                        return Problem("Cant perform while John isnt playing", statusCode: 406);
                     }
                     return Problem("No attached John", statusCode: 400);
                 }

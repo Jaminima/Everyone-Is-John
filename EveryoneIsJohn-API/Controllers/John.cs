@@ -174,9 +174,9 @@ namespace EveryoneIsJohn_API.Controllers
                     {
                         foreach (var player in john.players)
                         {
-                            if (!player.missions.Any(x => x.level == 0) || !player.missions.Any(x => x.level == 1) || !player.missions.Any(x => x.level == 2))
+                            if (!player.missions.Any(x => x.level == 1) || !player.missions.Any(x => x.level == 2) || !player.missions.Any(x => x.level == 3))
                             {
-                                return Problem($"{player.User} Is Missing A Mission For A Certain Level", statusCode: 428);
+                                return Problem($"{(Data.Stores.userStore.Get(player.User, out var u) ? u.Name : "?")} Is Missing A Mission For A Certain Level", statusCode: 428);
                             }
                         }
                         john.isPlaying = true;

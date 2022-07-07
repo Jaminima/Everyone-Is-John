@@ -73,12 +73,13 @@ class Players extends React.Component<any, any>{
         let rows = [];
         for (let i=0;i<this.props.matchmakingState.players.length;i++){
             let id = this.props.matchmakingState.players[i];
+            let fullPlayer = this.props.matchmakingState.fullPlayers!= null ? this.props.matchmakingState.fullPlayers.find(x=>x.user==id) : null;
             let name = this.props.matchmakingState.playersNames[i];
             let isOwner = this.props.matchmakingState.john.creator.toString()==this.props.user.identifier;
             let missions = isOwner ? (<button type="button" onClick={()=>this.setState({viewPlayerId: id})}>View</button>) : (<a></a>)
                 let kick = isOwner ? (<button type="button" onClick={()=>this.kickPlayer(id)}>Kick</button>) : (<a></a>)
 
-            rows.push((<tr key={i}>
+            rows.push((<tr key={i} style={{backgroundColor: (fullPlayer!=null && fullPlayer.missions.some(x=>x.acheived!=x.suggestedAcheived) ? "orange" : "inherit" )}}>
                 <td>{id}</td>
                 <td>{name}</td>
                 <td>{missions}</td>
