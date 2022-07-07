@@ -58,7 +58,7 @@ namespace EveryoneIsJohn_API.Controllers
         }
 
         [HttpPost("score/{idx}")]
-        public IActionResult ScoreMission(string idx, [FromQuery] bool decrement = false)
+        public IActionResult ScoreMission(string idx, [FromQuery] int playerId, [FromQuery] bool decrement = false)
         {
             if (int.TryParse(idx, out int Idx) && Idx >= 0 && Idx <= 4)
             {
@@ -66,13 +66,13 @@ namespace EveryoneIsJohn_API.Controllers
                 {
                     if (John.FindJohn(Request, out var john))
                     {
-                        if (john.GetPlayer(user, out var player))
+                        if (john.GetPlayer(playerId, out var player))
                         {
                             if (user.Identifier == john.Creator)
                             {
                                 player.missions[Idx].acheived += decrement ? -1 : 1;
                             }
-                            else
+                            else if (user.Identifier == player.User)
                             {
                                 player.missions[Idx].suggestedAcheived += decrement ? -1 : 1;
                             }

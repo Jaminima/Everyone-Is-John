@@ -95,15 +95,29 @@ class PlayerView extends React.Component<any, any>{
         this.setState({player:plr});
     }
 
+    incrementScore(idx: number,decrement=false){
+        doFetch("player/score/"+idx+"?playerId="+this.state.player.user+"&decrement="+(decrement?"true":"false"), "POST",
+            (d)=>{
+                let plr = this.state.player;
+                plr.missions =  d["missions"];
+                this.setState({player: plr});
+            },
+            (d)=>{
+
+            });
+    }
 
     getRows(){
         let rows = [];
         for (let i=0;i<this.state.player.missions.length;i++){
             let e = this.state.player.missions[i];
+            let sp = (<button type="button" onClick={()=>this.incrementScore(i,false)}>+</button>);
+            let sm = (<button type="button" onClick={()=>this.incrementScore(i,true)}>-</button>);
             rows.push((<tr key={i}>
                 <td><textarea onChange={(e) => this.updateMission(i, e.target.value)} readOnly={this.props.ownJohn} value={e.desc}/></td>
                 <td><input onChange={(e)=>this.updateMission(i,undefined,e.target.value)} readOnly={this.props.ownJohn} value={e.level}/></td>
-                <td>{e.acheived}</td>
+                <td>{this.props.ownJohn?sp:null}{e.acheived}{this.props.ownJohn?sm:null}</td>
+                <td>{!this.props.ownJohn?sp:null}{e.suggestedAcheived}{!this.props.ownJohn?sm:null}</td>
             </tr>))
         }
         return rows;
@@ -131,7 +145,8 @@ class PlayerView extends React.Component<any, any>{
                 <tr>
                     <th>Description</th>
                     <th>Level (1-3)</th>
-                    <th>Score</th>
+                    <th>Real Score</th>
+                    <th>Suggested Score</th>
                 </tr>
                 {this.getRows()}
                 </tbody>
