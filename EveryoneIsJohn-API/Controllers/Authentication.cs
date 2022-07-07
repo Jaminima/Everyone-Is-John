@@ -91,10 +91,6 @@ namespace EveryoneIsJohn_API.Controllers
                     {
                         if (name != null && name.Length > 0) user.Name = name;
                     }
-                    else
-                    {
-                        return Problem("Cant change while John is playing", statusCode: 406);
-                    }
                 }
                 else
                 {

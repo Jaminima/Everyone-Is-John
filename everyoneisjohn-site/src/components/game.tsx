@@ -48,11 +48,13 @@ class Game extends React.Component<any, any>{
     }
 
     updateName(){
+        let that = this;
         doFetch("authentication/update?name="+this.state.user.name,"post",
             (d)=>{
+                that.setState({user: d});
             },
             (d)=>{
-
+                that.setState({user: d});
             })
     }
 
