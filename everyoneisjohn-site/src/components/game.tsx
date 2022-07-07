@@ -51,6 +51,7 @@ class Game extends React.Component<any, any>{
             {(this.state.loaded ?
                 (<div>
                     <h1>Everyone Is <span style={{color: "rgb("+this.state.colorR+","+this.state.colorG+","+this.state.colorB+")"}}><em>John</em></span></h1>
+                    <hr/>
                     <Matchmaking user={this.state.user}></Matchmaking>
                 </div>)
                 :(<h3>No Login Yet.</h3>)

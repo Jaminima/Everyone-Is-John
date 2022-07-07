@@ -126,9 +126,9 @@ class Matchmaking extends React.Component<any, any>{
         return (<div>
             {(this.state.inJohn ?
                 (<div>
-                    <h1>Game - {this.state.john.identifier}</h1>
-                    <h2>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Awaiting Join" : (this.state.john.isPlaying) ? "Playing" : "Awaiting Start")} </h2>
-                    <h3>Character Name: {this.state.john.name}</h3>
+                    <h2>Game - {this.state.john.identifier}</h2>
+                    <h3>{(this.state.john.pendingPlayers.includes(this.props.user.identifier as never) ? "Awaiting Join" : (this.state.john.isPlaying) ? "Playing" : "Awaiting Start")} </h3>
+                    <h4>Character Name: {this.state.john.name}</h4>
                     <p style={{color: "red"}}>{this.state.gameError}</p>
                     {(this.state.john.creator.toString() == this.props.user.identifier ?
                             (<button type="button" onClick={() => {this.startJohn()}}>Start John</button>):(<div/>)
