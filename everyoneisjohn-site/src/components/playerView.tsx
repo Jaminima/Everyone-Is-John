@@ -110,6 +110,16 @@ class PlayerView extends React.Component<any, any>{
         return rows;
     }
 
+    save(){
+        let that = this;
+        doFetch("authentication/update?name="+this.state.newName,"post",
+            (d)=>{
+            },
+            (d)=>{
+
+            })
+    }
+
     render() {
         return (<div>
             <h3>Player Details</h3>
@@ -124,6 +134,7 @@ class PlayerView extends React.Component<any, any>{
                 {this.getRows()}
                 </tbody>
             </table>
+            <button type="button" onClick={()=>{this.save()}}>Update</button>
         </div>)
     }
 }

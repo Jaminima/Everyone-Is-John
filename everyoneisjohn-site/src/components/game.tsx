@@ -11,7 +11,11 @@ class Game extends React.Component<any, any>{
         user: {
             name: "",
             identifier: ""
-        }
+        },
+        colorI: 0,
+        colorR: 255,
+        colorG: 0,
+        colorB: 127
     }
 
     componentDidMount() {
@@ -28,16 +32,25 @@ class Game extends React.Component<any, any>{
                 })
             })
         }
+
+        setInterval(()=>{
+            let s = that.state;
+
+            s.colorR += s.colorI==0 ? -1 : (s.colorI==2 ? 1 : 0);
+            s.colorG += s.colorI==1 ? -1 : (s.colorI==0 ? 1 : 0);
+            s.colorB += s.colorI==2 ? -1 : (s.colorI==1 ? 1 : 0);
+
+            if (s.colorR==255 || s.colorG==255 || s.colorB == 255) s.colorI=(s.colorI+1)%3;
+
+            that.setState(s);
+        },50)
     }
 
     render() {
         return (<div>
             {(this.state.loaded ?
                 (<div>
-                    <h1>Profile</h1>
-                    <h3>Name - {this.state.user.name}</h3>
-                    <h5>Id - {this.state.user.identifier}</h5>
-                    <hr/>
+                    <h1>Everyone Is <span style={{color: "rgb("+this.state.colorR+","+this.state.colorG+","+this.state.colorB+")"}}><em>John</em></span></h1>
                     <Matchmaking user={this.state.user}></Matchmaking>
                 </div>)
                 :(<h3>No Login Yet.</h3>)
