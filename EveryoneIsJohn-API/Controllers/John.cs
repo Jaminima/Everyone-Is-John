@@ -144,6 +144,7 @@ namespace EveryoneIsJohn_API.Controllers
                         {
                             if (john.pendingPlayers.Remove(playerId))
                             {
+                                john.isPlaying = false;
                                 john.players.Add(new Data.Objects.Player(playerId));
                                 return Ok();
                             }
@@ -161,6 +162,25 @@ namespace EveryoneIsJohn_API.Controllers
                 return Problem("Cannot find John Or Player Id Malformed", statusCode: 400);
             }
             return Problem("No login", statusCode: 401);
+        }
+
+        [HttpPost("name")]
+        public IActionResult NameJohn([FromQuery] string name)
+        {
+            if (Authentication.CheckAuth(Request, out var user))
+            {
+                if (FindJohn(Request, out var john))
+                {
+                    if (john.Creator == user.Identifier || true)
+                    {
+                        john.Name = name;
+                        return new JsonResult(john);
+                    }
+                    return Problem("This is not your John", statusCode: 401);
+                }
+                return Problem("No Provided John Id", statusCode: 400);
+            }
+            return Problem("No Login", statusCode: 401);
         }
 
         [HttpPost("start")]

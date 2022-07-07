@@ -74,13 +74,15 @@ namespace EveryoneIsJohn_API.Controllers
                         {
                             if (john.GetPlayer(playerId, out var player))
                             {
+                                var mission = player.missions[Idx];
                                 if (user.Identifier == john.Creator)
                                 {
-                                    player.missions[Idx].acheived += decrement ? -1 : 1;
+                                    mission.acheived += decrement ? -1 : 1;
+                                    if (mission.suggestedAcheived <= mission.acheived) mission.suggestedAcheived = mission.acheived;
                                 }
                                 else if (user.Identifier == player.User)
                                 {
-                                    player.missions[Idx].suggestedAcheived += decrement ? -1 : 1;
+                                    mission.suggestedAcheived += decrement ? -1 : 1;
                                 }
                                 return new JsonResult(player);
                             }
