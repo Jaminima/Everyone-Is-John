@@ -80,6 +80,17 @@ namespace EveryoneIsJohn_API.Controllers
             return new JsonResult(new { user = user });
         }
 
+        [HttpPost("update")]
+        public IActionResult UpdateUser(string? name)
+        {
+            if (CheckAuth(Request, out var user))
+            {
+                if (name != null && name.Length > 0) user.Name = name;
+                return new JsonResult(user);
+            }
+            return Problem("No Login", statusCode: 401);
+        }
+
         #endregion Methods
     }
 }
